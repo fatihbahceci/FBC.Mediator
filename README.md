@@ -1,4 +1,7 @@
 # FBC.Mediator
+[![NuGet Badge](https://img.shields.io/nuget/v/FBC.Mediator.svg?label=NuGet)](https://www.nuget.org/packages/FBC.Mediator)
+
+[![NuGet Downloads](https://img.shields.io/nuget/dt/FBC.Mediator.svg)](https://www.nuget.org/packages/FBC.Mediator)
 
 `FBC.Mediator` is a lightweight, high-performance **Mediator pattern** implementation for .NET projects.  
 It provides **command/query dispatching**, **request handler caching**, and **endpoint registration** for ASP.NET Core.
