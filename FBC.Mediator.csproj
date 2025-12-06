@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+
+		<!-- NuGet metadata -->
+		<PackageId>FBC.Mediator</PackageId>
+		<Version>0.0.1</Version>
+		<Authors>Fatih Bahceci</Authors>
+		<Product>FBC.Mediator</Product>
+		<Description>
+			`FBC.Mediator` is a lightweight, high-performance **Mediator pattern** implementation for .NET projects.
+			It provides **command/query dispatching**, **request handler caching**, and **endpoint registration** for ASP.NET Core.
+		</Description>
+		<PackageTags>mediator;pattern;design;endpoint;mapping</PackageTags>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<RepositoryUrl>https://github.com/fatihbahceci/FBC.Mediator</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/fatihbahceci/FBC.Mediator</PackageProjectUrl>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	</PropertyGroup>
+	
+	<ItemGroup>
+		<None Include="README.md">
+			<Pack>true</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<!--<ItemGroup>
+		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="10.0.1" />
+	</ItemGroup>-->
+
+</Project>
