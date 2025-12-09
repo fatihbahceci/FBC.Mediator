@@ -8,6 +8,8 @@ It provides **command/query dispatching**, **request handler caching**, and **en
 
 ---
 
+Please feel free to provide any feedback that could help the project reach a level where it can benefit everyone.
+
 ## Features
 
 - `IMediator` for type-safe request/response and void requests
