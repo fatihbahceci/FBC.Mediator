@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 
 		<!-- NuGet metadata -->
 		<PackageId>FBC.Mediator</PackageId>
-		<Version>0.0.1</Version>
+		<Version>0.1.0</Version>
 		<Authors>Fatih Bahceci</Authors>
 		<Product>FBC.Mediator</Product>
 		<Description>

@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Routing;
+﻿using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
-//using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Diagnostics;
 using System.Reflection;
 
 namespace FBC.Mediator;
@@ -12,9 +11,10 @@ public static class MediatorExtensions
 {
     public static IServiceCollection AddMediator(this IServiceCollection services, params Assembly[] assemblies)
     {
-        //services.AddSingleton<IMediator, Mediator>();
         services.AddScoped<IMediator, FBCMediator>();
+
         var allAssemblies = assemblies.Length > 0 ? assemblies : AppDomain.CurrentDomain.GetAssemblies();
+
         var handlerTypes = allAssemblies.SelectMany(a => a.GetTypes())
             .Where(t => !t.IsAbstract && !t.IsInterface)
             .SelectMany(t => t.GetInterfaces()
@@ -22,6 +22,7 @@ public static class MediatorExtensions
                             (i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>) ||
                              i.GetGenericTypeDefinition() == typeof(IRequestHandler<>)))
                 .Select(i => new { HandlerType = t, InterfaceType = i }));
+
         foreach (var handler in handlerTypes)
         {
             services.AddScoped(handler.InterfaceType, handler.HandlerType);
@@ -33,56 +34,31 @@ public static class MediatorExtensions
 
         foreach (var endpointType in endpointTypes)
         {
-            services.AddTransient(endpointType);                    // with its own type (optional but good)
-            services.AddTransient(typeof(IEndpoint), endpointType); // for IEnumerable<IEndpoint> 
+            services.AddTransient(endpointType);
+            services.AddTransient(typeof(IEndpoint), endpointType);
         }
 
-        //services.TryAddEnumerable(ServiceDescriptor.Singleton<IPostConfigureOptions<SwaggerGenOptions>>(new SafeChainedSchemaIdConfigurator()));
         services.TryAddEnumerable(
             ServiceDescriptor.Singleton(typeof(IPostConfigureOptions<>), typeof(UniversalPostConfigureOptions<>)));
+
         return services;
     }
 
-    public static IApplicationBuilder UseMediatorEndpoints(this IApplicationBuilder app)
+    public static IEndpointRouteBuilder UseMediatorEndpoints(this IEndpointRouteBuilder app)
     {
-        var endpoints = app.ApplicationServices.GetServices<IEndpoint>();
-        //var routeBuilder = app.ApplicationServices.GetRequiredService<IEndpointRouteBuilder>();
-        var routeBuilder = (IEndpointRouteBuilder)app;
+        var endpoints = app.ServiceProvider.GetServices<IEndpoint>();
         foreach (var endpoint in endpoints)
         {
-            endpoint.AddRoutes(routeBuilder);
+            endpoint.AddRoutes(app);
         }
         return app;
     }
 }
-//internal sealed class SafeChainedSchemaIdConfigurator : IPostConfigureOptions<SwaggerGenOptions>
-//{
-//    public void PostConfigure(string name, SwaggerGenOptions options)
-//    {
-//        var existingSelector = options.SchemaGeneratorOptions.SchemaIdSelector;
-
-//        options.SchemaGeneratorOptions.SchemaIdSelector = type =>
-//        {
-//            //// 1. If user has a rule, try it first.
-//            //var userResult = existingSelector?.Invoke(type);
-
-//            //// 2. If user returned null or empty string → use our fallback.
-//            //if (!string.IsNullOrEmpty(userResult))
-//            //    return userResult;
-
-//            // 3. Fallback: like CreateDevice_Command.
-//            return type.DeclaringType != null
-//                ? $"{type.DeclaringType.Name}_{type.Name}"
-//                : type.Name;
-//        };
-//    }
-//}
-
 
 internal sealed class UniversalPostConfigureOptions<TOptions> : IPostConfigureOptions<TOptions>
     where TOptions : class
 {
-    public void PostConfigure(string name, TOptions options)
+    public void PostConfigure(string? name, TOptions options)
     {
         if (options == null)
             return;
@@ -111,9 +87,9 @@ internal sealed class UniversalPostConfigureOptions<TOptions> : IPostConfigureOp
                 return currentSelector?.Invoke(modelType) ?? modelType.Name;
             }));
         }
-        catch
+        catch (Exception ex)
         {
-            // swallow
+            Debug.WriteLine($"FBC.Mediator: Failed to configure Swagger schema ID selector: {ex.Message}");
         }
     }
 }

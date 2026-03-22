@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection.Extensions;
-
-namespace FBC.Mediator;
+﻿namespace FBC.Mediator;
 
 public interface IRequestBase;
 public interface IRequest<out TResponse> : IRequestBase;
